@@ -7,6 +7,7 @@ import CertificateManager from '../components/admin/CertificateManager';
 import SkillsManager from '../components/admin/SkillsManager';
 import ProfileManager from '../components/admin/ProfileManager';
 import SocialMediaManager from '../components/admin/SocialMediaManager';
+import CVManager from '../components/admin/CVManager';
 import MessagesViewer from '../components/admin/MessagesViewer';
 import { HiLogout } from 'react-icons/hi';
 
@@ -26,6 +27,7 @@ const Admin = () => {
     { id: 'leadership', label: 'Leadership', component: LeadershipManager },
     { id: 'certificates', label: 'Certificates', component: CertificateManager },
     { id: 'skills', label: 'Skills', component: SkillsManager },
+    { id: 'cv', label: 'CV/Resume', component: CVManager },
     { id: 'social', label: 'Social Media', component: SocialMediaManager },
     { id: 'messages', label: 'Messages', component: MessagesViewer },
   ];

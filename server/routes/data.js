@@ -22,6 +22,20 @@ router.get('/:collection', async (req, res) => {
   }
 });
 
+// Public route for messages (contact form)
+router.post('/messages', async (req, res) => {
+  try {
+    const Model = getModel('messages');
+    const item = new Model(req.body);
+    await item.save();
+    res.status(201).json(item);
+  } catch (error) {
+    console.error('Message save error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Protected route for other collections
 router.post('/:collection', authMiddleware, async (req, res) => {
   try {
     const Model = getModel(req.params.collection);

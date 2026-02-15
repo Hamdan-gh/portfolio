@@ -6,9 +6,11 @@ import { useFirestore } from '../../hooks/useFirestore';
 
 const Hero = () => {
   const { data: profileData } = useFirestore('profile');
+  const { data: cvData } = useFirestore('cv');
   const [text, setText] = useState('');
   const [profileName, setProfileName] = useState('Your Name');
   const [profileImage, setProfileImage] = useState('https://via.placeholder.com/400');
+  const [cvUrl, setCvUrl] = useState('');
   const fullText = 'BSc Computer Science Student | Developer | Youth Leader';
 
   useEffect(() => {
@@ -17,6 +19,12 @@ const Hero = () => {
       setProfileImage(profileData[0].profileImage || 'https://via.placeholder.com/400');
     }
   }, [profileData]);
+
+  useEffect(() => {
+    if (cvData.length > 0) {
+      setCvUrl(cvData[0].fileData || '');
+    }
+  }, [cvData]);
 
   useEffect(() => {
     let index = 0;
@@ -99,13 +107,23 @@ const Hero = () => {
               >
                 <HiCode /> View Projects
               </a>
-              <a
-                href="/cv.pdf"
-                download
-                className="flex items-center gap-2 glass px-6 py-3 rounded-lg hover:bg-dark-100 transition-colors"
-              >
-                <HiDownload /> Download CV
-              </a>
+              {cvUrl ? (
+                <a
+                  href={cvUrl}
+                  download="CV.pdf"
+                  className="flex items-center gap-2 glass px-6 py-3 rounded-lg hover:bg-dark-100 transition-colors"
+                >
+                  <HiDownload /> Download CV
+                </a>
+              ) : (
+                <button
+                  disabled
+                  className="flex items-center gap-2 glass px-6 py-3 rounded-lg opacity-50 cursor-not-allowed"
+                  title="CV not available"
+                >
+                  <HiDownload /> Download CV
+                </button>
+              )}
               <a
                 href="#contact"
                 className="flex items-center gap-2 border border-primary text-primary px-6 py-3 rounded-lg hover:bg-primary hover:text-white transition-colors"
