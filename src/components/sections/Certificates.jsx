@@ -2,11 +2,21 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useFirestore } from '../../hooks/useFirestore';
 import { fadeIn, staggerContainer } from '../../utils/animations';
-import { HiX } from 'react-icons/hi';
+import { HiX, HiDocumentText } from 'react-icons/hi';
 
 const Certificates = () => {
   const { data: certificates } = useFirestore('certificates');
   const [selectedCert, setSelectedCert] = useState(null);
+
+  const handleViewPdf = (e, pdfUrl) => {
+    e.stopPropagation();
+    if (pdfUrl) {
+      const newWindow = window.open();
+      newWindow.document.write(
+        `<iframe src="${pdfUrl}" width="100%" height="100%" style="border:none;"></iframe>`
+      );
+    }
+  };
 
   return (
     <section id="certificates" className="py-20 bg-dark-300">
@@ -31,13 +41,21 @@ const Certificates = () => {
                 variants={fadeIn('up', index * 0.1)}
                 whileHover={{ scale: 1.05 }}
                 onClick={() => setSelectedCert(cert)}
-                className="glass p-6 rounded-xl cursor-pointer"
+                className="glass p-6 rounded-xl cursor-pointer relative"
               >
                 <img
                   src={cert.imageUrl || 'https://via.placeholder.com/400x300'}
                   alt={cert.title}
                   className="w-full h-48 object-cover rounded-lg mb-4"
                 />
+                {cert.pdfUrl && (
+                  <button
+                    onClick={(e) => handleViewPdf(e, cert.pdfUrl)}
+                    className="absolute top-8 right-8 bg-primary text-white px-3 py-1 rounded-full text-xs flex items-center gap-1 hover:bg-cyan-600"
+                  >
+                    <HiDocumentText /> PDF
+                  </button>
+                )}
                 <h3 className="text-lg font-bold mb-2">{cert.title}</h3>
                 <p className="text-gray-400 text-sm mb-1">{cert.issuedBy}</p>
                 <p className="text-gray-500 text-xs">{cert.date}</p>
@@ -64,20 +82,34 @@ const Certificates = () => {
               className="glass p-6 rounded-2xl max-w-3xl w-full"
               onClick={(e) => e.stopPropagation()}
             >
-              <button
-                onClick={() => setSelectedCert(null)}
-                className="float-right text-2xl text-primary hover:text-cyan-600"
-              >
-                <HiX />
-              </button>
+              <div className="flex justify-between items-start mb-4">
+                <h3 className="text-2xl font-bold">{selectedCert.title}</h3>
+                <button
+                  onClick={() => setSelectedCert(null)}
+                  className="text-2xl text-primary hover:text-cyan-600"
+                >
+                  <HiX />
+                </button>
+              </div>
               <img
                 src={selectedCert.imageUrl || 'https://via.placeholder.com/800x600'}
                 alt={selectedCert.title}
                 className="w-full rounded-lg mb-4"
               />
-              <h3 className="text-2xl font-bold mb-2">{selectedCert.title}</h3>
-              <p className="text-gray-400 mb-1">{selectedCert.issuedBy}</p>
-              <p className="text-gray-500">{selectedCert.date}</p>
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-gray-400 mb-1">{selectedCert.issuedBy}</p>
+                  <p className="text-gray-500">{selectedCert.date}</p>
+                </div>
+                {selectedCert.pdfUrl && (
+                  <button
+                    onClick={(e) => handleViewPdf(e, selectedCert.pdfUrl)}
+                    className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-cyan-600"
+                  >
+                    <HiDocumentText /> View Full PDF
+                  </button>
+                )}
+              </div>
             </motion.div>
           </motion.div>
         )}
