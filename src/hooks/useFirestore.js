@@ -18,7 +18,8 @@ export const useFirestore = (collectionName) => {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 5000);
+    // Increased interval from 5s to 30s to reduce load
+    const interval = setInterval(fetchData, 30000);
     return () => clearInterval(interval);
   }, [collectionName]);
 
@@ -39,5 +40,5 @@ export const useFirestore = (collectionName) => {
     setData(prev => prev.filter(item => item._id !== id));
   };
 
-  return { data, loading, addItem, updateItem, deleteItem };
+  return { data, loading, addItem, updateItem, deleteItem, refetch: fetchData };
 };

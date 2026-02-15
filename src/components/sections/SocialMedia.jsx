@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { useFirestore } from '../../hooks/useFirestore';
 import { fadeIn, staggerContainer } from '../../utils/animations';
 import { FaLinkedin, FaGithub, FaTwitter, FaFacebook, FaWhatsapp, FaInstagram, FaYoutube, FaTiktok } from 'react-icons/fa';
+import Loading from '../common/Loading';
 
 const iconMap = {
   linkedin: FaLinkedin,
@@ -15,7 +16,20 @@ const iconMap = {
 };
 
 const SocialMedia = () => {
-  const { data: socialLinks } = useFirestore('socialLinks');
+  const { data: socialLinks, loading } = useFirestore('socialLinks');
+
+  if (loading) {
+    return (
+      <section className="py-20 bg-dark-200">
+        <div className="container mx-auto px-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-12">
+            Connect With <span className="text-primary">Me</span>
+          </h2>
+          <Loading />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-20 bg-dark-200">
@@ -24,7 +38,7 @@ const SocialMedia = () => {
           variants={staggerContainer}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-100px" }}
         >
           <motion.h2
             variants={fadeIn('down')}
@@ -33,24 +47,28 @@ const SocialMedia = () => {
             Connect With <span className="text-primary">Me</span>
           </motion.h2>
 
-          <div className="flex justify-center gap-6 flex-wrap">
-            {socialLinks.map((link, index) => {
-              const Icon = iconMap[link.platform.toLowerCase()];
-              return (
-                <motion.a
-                  key={link.id}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  variants={fadeIn('up', index * 0.1)}
-                  whileHover={{ scale: 1.2, rotate: 5 }}
-                  className="glass p-6 rounded-full text-4xl text-primary hover:bg-primary hover:text-white transition-colors"
-                >
-                  {Icon && <Icon />}
-                </motion.a>
-              );
-            })}
-          </div>
+          {socialLinks.length === 0 ? (
+            <p className="text-center text-gray-400">No social links yet</p>
+          ) : (
+            <div className="flex justify-center gap-6 flex-wrap">
+              {socialLinks.map((link, index) => {
+                const Icon = iconMap[link.platform.toLowerCase()];
+                return (
+                  <motion.a
+                    key={link._id || link.id}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    variants={fadeIn('up', index * 0.1)}
+                    whileHover={{ scale: 1.2, rotate: 5 }}
+                    className="glass p-6 rounded-full text-4xl text-primary hover:bg-primary hover:text-white transition-colors"
+                  >
+                    {Icon && <Icon />}
+                  </motion.a>
+                );
+              })}
+            </div>
+          )}
         </motion.div>
       </div>
     </section>

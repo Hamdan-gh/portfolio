@@ -51,7 +51,7 @@ const Contact = () => {
                 <HiMail className="text-3xl text-primary mb-2" />
                 <h3 className="font-semibold mb-2">Email</h3>
                 <a href="mailto:your@email.com" className="text-gray-400 hover:text-primary">
-                  your@email.com
+                  saeedhamdan360x@gmail.com
                 </a>
               </div>
 
@@ -64,7 +64,7 @@ const Contact = () => {
                   rel="noopener noreferrer"
                   className="text-gray-400 hover:text-primary"
                 >
-                  +1 234 567 890
+                  +233 201307799
                 </a>
               </div>
             </motion.div>
