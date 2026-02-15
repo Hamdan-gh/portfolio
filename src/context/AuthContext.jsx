@@ -11,10 +11,16 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
+    console.log('Auth init - token exists:', !!token);
+    
     if (token) {
       api.get('/auth/me')
-        .then(userData => setUser(userData))
-        .catch(() => {
+        .then(userData => {
+          console.log('User authenticated:', userData);
+          setUser(userData);
+        })
+        .catch((error) => {
+          console.error('Auth check failed:', error);
           localStorage.removeItem('token');
           setUser(null);
         })
@@ -25,16 +31,35 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    const response = await api.post('/auth/login', { email, password });
-    localStorage.setItem('token', response.token);
-    setUser(response.user);
-    return response;
+    console.log('Login attempt for:', email);
+    try {
+      const response = await api.post('/auth/login', { email, password });
+      console.log('Login response:', response);
+      
+      if (response.token) {
+        localStorage.setItem('token', response.token);
+        setUser(response.user);
+        console.log('User logged in:', response.user);
+        return response;
+      } else {
+        throw new Error('No token received');
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+      throw error;
+    }
   };
   
   const logout = async () => {
-    await api.post('/auth/logout');
-    localStorage.removeItem('token');
-    setUser(null);
+    console.log('Logging out');
+    try {
+      await api.post('/auth/logout');
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      localStorage.removeItem('token');
+      setUser(null);
+    }
   };
 
   return (

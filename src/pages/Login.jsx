@@ -15,12 +15,20 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
 
+    console.log('Attempting login with:', email);
+
     try {
-      await login(email, password);
+      const response = await login(email, password);
+      console.log('Login successful:', response);
       toast.success('Login successful!');
-      navigate('/admin');
+      
+      // Small delay to ensure state is updated
+      setTimeout(() => {
+        navigate('/admin');
+      }, 100);
     } catch (error) {
-      toast.error('Invalid credentials');
+      console.error('Login error:', error);
+      toast.error(error.message || 'Invalid credentials');
     } finally {
       setLoading(false);
     }
@@ -35,30 +43,49 @@ const Login = () => {
       >
         <h2 className="text-3xl font-bold text-center mb-8">Admin Login</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="email"
-            placeholder="Email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-dark-200 border border-primary/30 rounded-lg px-4 py-3 focus:outline-none focus:border-primary"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-dark-200 border border-primary/30 rounded-lg px-4 py-3 focus:outline-none focus:border-primary"
-          />
+          <div>
+            <label className="block text-sm mb-2 text-gray-400">Email</label>
+            <input
+              type="email"
+              placeholder="admin@example.com"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full bg-dark-200 border border-primary/30 rounded-lg px-4 py-3 focus:outline-none focus:border-primary"
+            />
+          </div>
+          <div>
+            <label className="block text-sm mb-2 text-gray-400">Password</label>
+            <input
+              type="password"
+              placeholder="Enter your password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full bg-dark-200 border border-primary/30 rounded-lg px-4 py-3 focus:outline-none focus:border-primary"
+            />
+          </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-primary text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors disabled:opacity-50"
+            className="w-full bg-primary text-white py-3 rounded-lg hover:bg-cyan-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
           >
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                Logging in...
+              </span>
+            ) : (
+              'Login'
+            )}
           </button>
         </form>
+        
+        <div className="mt-6 text-center">
+          <a href="/" className="text-sm text-gray-400 hover:text-primary">
+            ← Back to Home
+          </a>
+        </div>
       </motion.div>
     </div>
   );
